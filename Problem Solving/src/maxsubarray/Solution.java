@@ -10,56 +10,35 @@ public class Solution
 	/**
 	 * Calculate the maximum contiguous sub-array sum of the given array
 	 * 
-	 * @param a
-	 *            Given array
+	 * @param a Given array
+	 * 
 	 * @return The maximum contiguous sub-array sum
-	 */
-	public static long contiguousMaxSubArray(long a[])
-	{
-		int lo = 0, hi = a.length - 1;
-		return contiguousMaxSubArray(lo, hi, a);
-	}
-	
-	private static long contiguousMaxSubArray(int l, int r, long a[])
+	 */	
+	private static long contiguousMaxSubArray(long a[])
 	{
 		/*
-		 * Problem does not have optimal substructure
+		 * Kadane's algorithm
+		 * One iteration per element of the array
+		 * At each iteration the max contiguous sum ending at that particular element(maxEndingHere) is calculated
+		 * The max of these(maxSoFar) is kept track of
 		 */
 		
+		long maxEndingHere = a[0];
+		long maxSoFar = a[0];
 		
-		if (l == r)
-			return a[l];
-		
-		int mid = (l + r) / 2;
-		long leftSum = contiguousMaxSubArray(l, mid, a);
-		long rightSum = contiguousMaxSubArray(mid + 1, r, a);
-		long midSum = contiguousMaxSubArrayCrossSum(l, r, a);
-		
-		return Math.max(Math.max(leftSum, rightSum), midSum);
+		for (int i = 1; i < a.length; i++)
+		{
+			if (maxEndingHere + a[i] > a[i])
+				maxEndingHere += a[i];
+			else
+				maxEndingHere = a[i];
+			
+			if (maxEndingHere > maxSoFar)
+				maxSoFar = maxEndingHere;
+		}
+		return maxSoFar;
 	}
 	
-	private static long contiguousMaxSubArrayCrossSum(int l, int r, long[] a)
-	{
-		int mid = (l + r) / 2;
-		
-		long sum = 0, leftSum = a[mid];
-		for (int i = mid; i >= l; i--) {
-			sum += a[i];
-			if (sum > leftSum)
-				leftSum = sum;
-		}
-		
-		sum = 0;
-		long rightSum = a[mid + 1];
-		for (int i = mid + 1; i <= r; i++) {
-			sum += a[i];
-			if (sum > rightSum)
-				rightSum = sum;
-		}
-		
-		return leftSum + rightSum;
-	}
-
 	public static long nonContiguousMaxSubArray(long a[])
 	{
 		long sum = 0;
